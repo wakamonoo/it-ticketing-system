@@ -33,6 +33,8 @@ export default function MyTicketsPage() {
         setLoading(false);
       }
     }
+
+    loadTickets()
   }, []);
 
   if (loading) {

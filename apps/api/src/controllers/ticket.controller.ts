@@ -138,6 +138,8 @@ export const getTicketActivity = async (req: any, res: any) => {
   }
 };
 
+
+
 export const getTicketById = async (req: any, res: any) => {
   try {
     const ticketId = req.params.id;

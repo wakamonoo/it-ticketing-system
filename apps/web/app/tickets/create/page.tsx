@@ -3,17 +3,23 @@
 import { apiFetch } from "@/app/services/api";
 import ProtectedRoute from "@/components/protectedRoute";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function CreateTicketPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ticketTypeId, setTicketTypeId] = useState("");
+  const [types, setTypes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!ticketTypeId) {
+      alert("Please select a ticket type");
+    }
+    
     try {
       await apiFetch("/tickets", {
         method: "POST",
@@ -30,6 +36,21 @@ export default function CreateTicketPage() {
       alert("failed to create ticket");
     }
   }
+
+  useEffect(() => {
+    async function loadTypes() {
+      try {
+        const data = await apiFetch("/tickets/types");
+        setTypes(data);
+      } catch (err) {
+        console.error("failed to load ticket types:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadTypes();
+  }, []);
 
   return (
     <ProtectedRoute>
@@ -49,15 +70,24 @@ export default function CreateTicketPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <input
+          <select
             className="border p-2"
-            placeholder="Ticket Type Id"
             value={ticketTypeId}
             onChange={(e) => setTicketTypeId(e.target.value)}
-          />
+          >
+            <option value="">Select Ticket Type</option>
+            {loading ? (
+              <option disabled>Loading...</option>
+            ) : (
+              types.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))
+            )}
+          </select>
+          <button className="bg-black text-white p-2">Create</button>
         </form>
-
-        <button className="bg-black text-white p-2">Create</button>
       </div>
     </ProtectedRoute>
   );

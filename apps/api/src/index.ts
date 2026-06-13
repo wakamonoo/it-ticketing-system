@@ -2,9 +2,12 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
-import autRoutes from "./routes/auth.routes";
+import authRoutes from "./routes/auth.routes";
 import ticketRoutes from "./routes/ticket.routes";
 import userRoutes from "./routes/user.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
+import ticketTypeRoutes from "./routes/ticketType.routes"
+
 import { authMiddleware } from "./middleware/auth.middleware";
 
 dotenv.config();
@@ -22,9 +25,11 @@ app.get("/me", authMiddleware, (req: any, res) => {
   res.json(req.user);
 });
 
-app.use("/auth", autRoutes);
+app.use("/auth", authRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/users", userRoutes);
+app.use("/dashboard", dashboardRoutes);
+app.use("/ticketType", ticketTypeRoutes)
 
 const PORT = process.env.PORT || 5000;
 
