@@ -7,6 +7,83 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Department {
+  id              String           @id @default(cuid())
+  name            String           @unique
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  tickets         Ticket[]
+  ticketPipelines TicketPipeline[]
+  users           User[]
+}
+
+model User {
+  id              String        @id @default(cuid())
+  name            String
+  email           String        @unique
+  password        String
+  role            Role
+  departmentId    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  activityLogs    ActivityLog[]
+  assignedTickets Ticket[]      @relation("TicketAssignee")
+  createdTickets  Ticket[]      @relation("TicketCreator")
+  department      Department?   @relation(fields: [departmentId], references: [id])
+}
+
+model TicketType {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  tickets     Ticket[]
+  pipeline    TicketPipeline[]
+}
+
+model Ticket {
+  id                  String        @id @default(cuid())
+  title               String
+  description         String
+  status              TicketStatus  @default(OPEN)
+  ticketTypeId        String
+  createdById         String
+  assignedToId        String?
+  currentDepartmentId String
+  resolvedAt          DateTime?
+  closedAt            DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  pipelineStep        Int           @default(1)
+  latestRemark        String?
+  activities          ActivityLog[]
+  assignedTo          User?         @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  createdBy           User          @relation("TicketCreator", fields: [createdById], references: [id])
+  currentDepartment   Department    @relation(fields: [currentDepartmentId], references: [id])
+  ticketType          TicketType    @relation(fields: [ticketTypeId], references: [id])
+}
+
+model ActivityLog {
+  id        String       @id @default(cuid())
+  ticketId  String
+  userId    String
+  type      ActivityType
+  message   String?
+  createdAt DateTime     @default(now())
+  ticket    Ticket       @relation(fields: [ticketId], references: [id])
+  user      User         @relation(fields: [userId], references: [id])
+}
+
+model TicketPipeline {
+  id           String     @id @default(cuid())
+  ticketTypeId String
+  departmentId String
+  order        Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+}
+
 enum Role {
   END_USER
   DEPARTMENT_MEMBER
@@ -26,109 +103,4 @@ enum ActivityType {
   REASSIGNED
   STATUS_CHANGED
   ESCALATED
-}
-
-model Department {
-  id   String @id @default(cuid())
-  name String @unique
-
-  users   User[]
-  tickets Ticket[]
-
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  ticketPipelines TicketPipeline[]
-}
-
-model User {
-  id       String @id @default(cuid())
-  name     String
-  email    String @unique
-  password String
-
-  role Role
-
-  departmentId String?
-  department   Department? @relation(fields: [departmentId], references: [id])
-
-  createdTickets  Ticket[] @relation("TicketCreator")
-  assignedTickets Ticket[] @relation("TicketAssignee")
-
-  activityLogs ActivityLog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model TicketType {
-  id          String @id @default(cuid())
-  name        String @unique
-  description String
-
-  tickets  Ticket[]
-  pipeline TicketPipeline[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Ticket {
-  id String @id @default(cuid())
-
-  title       String
-  description String
-
-  status TicketStatus @default(OPEN)
-
-  ticketTypeId String
-  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
-
-  pipelineStep Int @default(1)
-
-  createdById String
-  createdBy   User   @relation("TicketCreator", fields: [createdById], references: [id])
-
-  assignedToId String?
-  assignedTo   User?   @relation("TicketAssignee", fields: [assignedToId], references: [id])
-
-  latestRemark String?
-
-  currentDepartmentId String
-  currentDepartment   Department @relation(fields: [currentDepartmentId], references: [id])
-
-  activities ActivityLog[]
-
-  resolvedAt DateTime?
-  closedAt   DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ActivityLog {
-  id String @id @default(cuid())
-
-  ticketId String
-  ticket   Ticket @relation(fields: [ticketId], references: [id])
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  type ActivityType
-
-  message String?
-
-  createdAt DateTime @default(now())
-}
-
-model TicketPipeline {
-  id String @id @default(cuid())
-
-  ticketTypeId String
-  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
-
-  departmentId String
-  department   Department @relation(fields: [departmentId], references: [id])
-
-  order Int
 }
