@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import autRoutes from "./routes/auth.routes";
 import ticketRoutes from "./routes/ticket.routes";
+import userRoutes from "./routes/user.routes";
 import { authMiddleware } from "./middleware/auth.middleware";
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.get("/me", authMiddleware, (req: any, res) => {
 
 app.use("/auth", autRoutes);
 app.use("/tickets", ticketRoutes);
+app.use("/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
