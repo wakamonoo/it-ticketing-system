@@ -30,24 +30,29 @@ export default function LoginPage() {
   }
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-80">
-        <h1 className="text-2xl font-bold">Login</h1>
-        <input
-          className="border p-2"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className="border p-2"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button className="bg-black text-white p-2" type="submit">
-          Login
+      <div className="flex flex-col gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-80">
+          <h1 className="text-2xl font-bold text-center">Login</h1>
+          <input
+            className="border p-2 rounded"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className="border p-2 rounded"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button className="bg-blue-600 text-white p-2 rounded-2xl cursor-pointer hover:opacity-80 duration-200 transition-all" type="submit">
+            Login
+          </button>
+        </form>
+        <button onClick={() => router.push("/register")} className="bg-red-400 text-white p-2 rounded-2xl cursor-pointer hover:opacity-80 duration-200 transition-all" type="submit">
+          Register
         </button>
-      </form>
+      </div>
     </div>
   );
 }

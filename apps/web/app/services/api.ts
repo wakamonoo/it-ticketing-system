@@ -15,11 +15,18 @@ export async function apiFetch(endpoint: string, options?: RequestInit) {
     },
   });
 
-  const data = await response.json();
+  const text = await response.text();
+
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = text;
+  }
 
   if (!response.ok) {
     console.error("api error:", data);
-    throw new Error(data.error || "request failed");
+    throw new Error(typeof data === "string" ? data : "request failed");
   }
 
   return data;

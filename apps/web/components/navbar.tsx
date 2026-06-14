@@ -7,7 +7,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (pathname === "/login") {
+  if (pathname === "/login" || pathname === "/register") {
     return null;
   }
 
@@ -17,16 +17,35 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="border-b p-4 flex gap-4">
-      <Link href={"/dashboard"}>Dashboard</Link>
+    <nav className="border-b py-4 px-8 flex gap-4 bg-amber-800">
+      <Link href={"/dashboard"}>
+        <p className="font-bold hover:text-white duration-200 transition-all">
+          Dashboard
+        </p>
+      </Link>
 
-      <Link href={"/tickets/create"}>Create Ticket</Link>
+      <Link href={"/tickets/create"}>
+        <p className="font-bold hover:text-white duration-200 transition-all">
+          Create Ticket
+        </p>
+      </Link>
 
-      <Link href={"/tickets/my"}>My Tickets</Link>
+      <Link href={"/tickets/my"}>
+        <p className="font-bold hover:text-white duration-200 transition-all">
+          My Tickets
+        </p>
+      </Link>
 
-      <Link href={"/tickets/department"}>Department Queue</Link>
+      <Link href={"/tickets/department"}>
+        <p className="font-bold hover:text-white duration-200 transition-all">
+          Department Queue
+        </p>
+      </Link>
 
-      <button onClick={logout} className="ml-auto">
+      <button
+        onClick={logout}
+        className="ml-auto font-bold hover:text-white duration-200 transition-all cursor-pointer"
+      >
         Logout
       </button>
     </nav>

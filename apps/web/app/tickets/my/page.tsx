@@ -50,7 +50,7 @@ export default function MyTicketsPage() {
         ) : (
           <div className="space-y-3">
             {tickets.map((ticket) => (
-              <div key={ticket.id} className="border p-4 rounded">
+              <div key={ticket.id} className="border p-4 rounded bg-amber-200">
                 <h2 className="font-semibold">{ticket.title}</h2>
                 <p className="text-sm text-gray-600">{ticket.description}</p>
 

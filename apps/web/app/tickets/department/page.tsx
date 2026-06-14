@@ -54,7 +54,7 @@ export default function DepartmentPage() {
               <Link
                 key={ticket.id}
                 href={`/tickets/${ticket.id}`}
-                className="block border rounded p-4"
+                className="block border rounded p-4 bg-amber-200"
               >
                 <h3 className="font-semibold">{ticket.title}</h3>
 
@@ -74,7 +74,7 @@ export default function DepartmentPage() {
               <Link
                 key={ticket.id}
                 href={`/tickets/${ticket.id}`}
-                className="block border rounded p-4"
+                className="block border rounded p-4 bg-amber-200"
               >
                 <h3 className="font-semibold">{ticket.title}</h3>
 

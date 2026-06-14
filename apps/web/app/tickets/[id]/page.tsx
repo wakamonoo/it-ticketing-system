@@ -35,21 +35,24 @@ export default function TicketDetailsPage() {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
   const [assignedToId, setAssignedToId] = useState("");
 
   useEffect(() => {
     async function load() {
       try {
-        const [ticketData, activityData] = await Promise.all([
-          apiFetch(`/tickets/${id}`),
-          apiFetch(`/tickets/${id}/activity`),
-        ]);
-
-        const departmentUser = await apiFetch("/users/department");
+        const [ticketData, activityData, departmentUserData, userData] =
+          await Promise.all([
+            apiFetch(`/tickets/${id}`),
+            apiFetch(`/tickets/${id}/activity`),
+            apiFetch("/users/department"),
+            apiFetch("/users/me"),
+          ]);
 
         setTicket(ticketData);
         setActivity(activityData);
-        setUsers(departmentUser);
+        setUsers(departmentUserData);
+        setUser(userData);
       } catch (err) {
         console.error("load ticker error:", err);
       } finally {
@@ -116,6 +119,19 @@ export default function TicketDetailsPage() {
     }
   }
 
+  const cannotAssign =
+    ticket?.status === "RESOLVED" || ticket?.status === "CLOSED";
+
+  const cannotEscalate =
+    ticket?.status === "RESOLVED" ||
+    ticket?.status === "CLOSED" ||
+    ticket?.currentDepartment.name === "Infrastructure";
+
+  const cannotResolve =
+    ticket?.status === "RESOLVED" || ticket?.status === "CLOSED";
+
+  const cannotClose = ticket?.status !== "RESOLVED";
+
   if (loading) return <div className="p-6">loading...</div>;
 
   if (!ticket) return <div className="p-6">ticket not found</div>;
@@ -123,7 +139,7 @@ export default function TicketDetailsPage() {
   return (
     <ProtectedRoute>
       <div className="p-6 space-y-6">
-        <div className="border p-4 rounded">
+        <div className="border p-4 rounded bg-amber-200">
           <h1 className="text-2xl font-bold">{ticket.title}</h1>
           <p className="text-gray-600">{ticket.description}</p>
 
@@ -135,62 +151,81 @@ export default function TicketDetailsPage() {
             <p>Assigned To: {ticket.assignedTo?.name ?? "Unassigned"}</p>
           </div>
 
-          <div className="space-y-2">
-            {activity.map((a) => (
-              <div key={a.id} className="text-sm border-b pb-2">
-                <p>{a.type}</p>
-                <p className="text-gray-500">
-                  by {a.user.name} | {new Date(a.createdAt).toLocaleString()}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="border p-4 rounded space-y-2">
-            <h2 className="text-xl font-semibold">Actions</h2>
-
-            <div className="flex gap-2 flex-wrap">
-              <select
-                className="border p-2"
-                value={assignedToId}
-                onChange={(e) => setAssignedToId(e.target.value)}
-              >
-                <option value="">Select User</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={assignTicket}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                Assign
-              </button>
-
-              <button
-                onClick={escalateTicket}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                Escalate
-              </button>
-
-              <button
-                onClick={resolveTicket}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                Resolve
-              </button>
-
-              <button
-                onClick={closeTicket}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                Close
-              </button>
+          <div className="mt-4">
+            <p className="font-bold py-2">Ticket Activity</p>
+            <div className="space-y-2">
+              {activity.map((a) => (
+                <div key={a.id} className="text-sm border-b pb-2">
+                  <p>{a.type}</p>
+                  <p className="text-gray-500">
+                    by {a.user.name} | {new Date(a.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
+
+          {user.role === "DEPARTMENT_MEMBER" ? (
+            <div className="mt-2 border p-4 rounded space-y-2">
+              <h2 className="text-xl font-semibold">Actions</h2>
+
+              <div className="flex gap-2 flex-wrap">
+                <select
+                  className="border p-2"
+                  value={assignedToId}
+                  onChange={(e) => setAssignedToId(e.target.value)}
+                >
+                  <option value="">Select User</option>
+                  {users.map((user) => (
+                    <option
+                      key={user.id}
+                      value={user.id}
+                      className="text-black"
+                    >
+                      {user.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={assignTicket}
+                  disabled={cannotAssign}
+                  className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotAssign ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
+                >
+                  Assign
+                </button>
+
+                <button
+                  onClick={escalateTicket}
+                  disabled={cannotEscalate}
+                  className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotEscalate ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
+                >
+                  Escalate
+                </button>
+
+                <button
+                  onClick={resolveTicket}
+                  disabled={cannotResolve}
+                  className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotResolve ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
+                >
+                  Resolve
+                </button>
+
+                <button
+                  onClick={closeTicket}
+                  disabled={cannotClose}
+                  className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotClose ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-4">
+              <p className="text-xs opacity-60">
+                Actions only availble for Department Members
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </ProtectedRoute>

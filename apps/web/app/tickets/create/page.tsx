@@ -19,7 +19,7 @@ export default function CreateTicketPage() {
     if (!ticketTypeId) {
       alert("Please select a ticket type");
     }
-    
+
     try {
       await apiFetch("/tickets", {
         method: "POST",
@@ -40,7 +40,7 @@ export default function CreateTicketPage() {
   useEffect(() => {
     async function loadTypes() {
       try {
-        const data = await apiFetch("/tickets/types");
+        const data = await apiFetch("/ticketType");
         setTypes(data);
       } catch (err) {
         console.error("failed to load ticket types:", err);
@@ -56,38 +56,42 @@ export default function CreateTicketPage() {
     <ProtectedRoute>
       {" "}
       <div className="min-h-screen flex items-center justify-center">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-96">
-          <h1 className="text-2xl font-bold">Create Ticket</h1>
-          <input
-            className="border p-2"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <input
-            className="border p-2"
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <select
-            className="border p-2"
-            value={ticketTypeId}
-            onChange={(e) => setTicketTypeId(e.target.value)}
-          >
-            <option value="">Select Ticket Type</option>
-            {loading ? (
-              <option disabled>Loading...</option>
-            ) : (
-              types.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))
-            )}
-          </select>
-          <button className="bg-black text-white p-2">Create</button>
-        </form>
+        <div className="flex flex-col items-center justify-center">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-96">
+            <h1 className="text-2xl font-bold text-center">Create Ticket</h1>
+            <input
+              className="border p-2 rounded"
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <input
+              className="border p-2 rounded"
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <select
+              className="border p-2 rounded"
+              value={ticketTypeId}
+              onChange={(e) => setTicketTypeId(e.target.value)}
+            >
+              <option value="">Select Ticket Type</option>
+              {loading ? (
+                <option disabled>Loading...</option>
+              ) : (
+                types.map((t) => (
+                  <option key={t.id} value={t.id} className="text-black">
+                    {t.name}
+                  </option>
+                ))
+              )}
+            </select>
+            <button className="bg-blue-600 text-white p-2 rounded-2xl cursor-pointer hover:opacity-80 duration-200 transition-all">
+              Create
+            </button>
+          </form>
+        </div>
       </div>
     </ProtectedRoute>
   );
