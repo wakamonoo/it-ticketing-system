@@ -38,6 +38,14 @@ export default function DepartmentPage() {
     load();
   }, []);
 
+  const statusColor: Record<string, string> = {
+    OPEN: "bg-yellow-200",
+    IN_PROGRESS: "bg-orange-200",
+    ESCALATED: "bg-purple-200",
+    RESOLVED: "bg-green-200",
+    CLOSED: "bg-gray-200",
+  };
+
   if (loading) {
     return <div className="p-6">Loading...</div>;
   }
@@ -46,6 +54,28 @@ export default function DepartmentPage() {
     <ProtectedRoute>
       <div className="p-6 space-y-8">
         <h1 className="text-3xl font-bold">Department Qeue</h1>
+        <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-yellow-200" />
+            <p className="font-bold text-sm">Open</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-orange-200" />
+            <p className="font-bold text-sm">In Progress</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-purple-200" />
+            <p className="font-bold text-sm">Escalated</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-green-200" />
+            <p className="font-bold text-sm">Resolved</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-gray-200" />
+            <p className="font-bold text-sm">Closed</p>
+          </div>
+        </div>
 
         <div>
           <h2 className="text-xl font-semibold mb-4">Unassigned Tickets</h2>
@@ -61,7 +91,7 @@ export default function DepartmentPage() {
                 <Link
                   key={ticket.id}
                   href={`/tickets/${ticket.id}`}
-                  className="block border rounded p-4 bg-amber-200"
+                  className={`block border rounded p-4 hover:-translate-y-2 duration-200 transition-all ${statusColor[ticket.status] ?? "bg-amber-200"}`}
                 >
                   <h3 className="font-semibold">{ticket.title}</h3>
 
@@ -90,7 +120,7 @@ export default function DepartmentPage() {
                 <Link
                   key={ticket.id}
                   href={`/tickets/${ticket.id}`}
-                  className="block border rounded p-4 bg-amber-200 hover:-translate-y-2 duration-200 transition-all"
+                  className={`block border rounded p-4 hover:-translate-y-2 duration-200 transition-all ${statusColor[ticket.status] ?? "bg-amber-200"}`}
                 >
                   <h3 className="font-semibold">{ticket.title}</h3>
 

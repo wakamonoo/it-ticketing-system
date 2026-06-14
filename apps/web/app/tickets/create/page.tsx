@@ -4,6 +4,7 @@ import { apiFetch } from "@/app/services/api";
 import ProtectedRoute from "@/components/protectedRoute";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function CreateTicketPage() {
   const router = useRouter();
@@ -17,7 +18,14 @@ export default function CreateTicketPage() {
     e.preventDefault();
 
     if (!ticketTypeId) {
-      alert("Please select a ticket type");
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Please select ticket type!",
+        icon: "error",
+        showConfirmButton: true,
+      });
+      return
     }
 
     try {
@@ -30,10 +38,25 @@ export default function CreateTicketPage() {
         }),
       });
 
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Ticket created succefully",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       router.push("/dashboard");
     } catch (err) {
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Kindly try again!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       console.error("create ticket error", err);
-      alert("failed to create ticket");
     }
   }
 

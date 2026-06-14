@@ -36,7 +36,7 @@ export default function DashboardPage() {
 
     load();
   }, []);
-
+  
   return (
     <ProtectedRoute>
       <div className="p-8">
@@ -49,23 +49,23 @@ export default function DashboardPage() {
           <Loader />
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            <div className="border p-4 rounded bg-blue-100">
+            <div className="border p-4 rounded bg-blue-200">
               My Tickets: {stats.myTickets}
             </div>
 
-            <div className="border p-4 rounded bg-yellow-100">
+            <div className="border p-4 rounded bg-yellow-200">
               Open Tickets: {stats.openTickets}
             </div>
 
-            <div className="border p-4 rounded bg-orange-100">
+            <div className="border p-4 rounded bg-orange-200">
               In Progress Tickets: {stats.inProgressTickets}
             </div>
 
-            <div className="border p-4 rounded bg-purple-100">
+            <div className="border p-4 rounded bg-purple-200">
               Escalated Tickets: {stats.escalatedTickets}
             </div>
 
-            <div className="border p-4 rounded bg-green-100">
+            <div className="border p-4 rounded bg-green-200">
               Resolved Tickets: {stats.resolvedTickets}
             </div>
 

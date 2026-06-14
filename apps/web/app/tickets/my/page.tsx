@@ -3,6 +3,7 @@
 import { apiFetch } from "@/app/services/api";
 import ProtectedRoute from "@/components/protectedRoute";
 import { useEffect, useState } from "react";
+import { FaTicketAlt } from "react-icons/fa";
 
 type Ticket = {
   id: string;
@@ -34,7 +35,7 @@ export default function MyTicketsPage() {
       }
     }
 
-    loadTickets()
+    loadTickets();
   }, []);
 
   if (loading) {
@@ -46,7 +47,10 @@ export default function MyTicketsPage() {
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-4">My Tickets</h1>
         {tickets.length === 0 ? (
-          <p>No tickets found</p>
+          <div className="flex flex-col items-center p-8">
+            <FaTicketAlt className="text-4xl text-amber-600" />
+            <p className="text-sm text-amber-600">You have no tickets created</p>
+          </div>
         ) : (
           <div className="space-y-3">
             {tickets.map((ticket) => (

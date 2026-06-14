@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "../services/api";
+import Swal from "sweetalert2";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -43,10 +44,26 @@ export default function RegisterPage() {
 
       localStorage.setItem("token", data.token);
 
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Registered succesfully",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       router.push("/login");
     } catch (err) {
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Failed, kindly try again!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       console.error("registration error:", err);
-      alert("Registration failed");
     }
   }
   return (
@@ -87,7 +104,10 @@ export default function RegisterPage() {
             ))
           )}
         </select>
-        <button className="bg-blue-600 rounded-2xl text-white p-2 cursor-pointer hover:opacity-80 duration-200 transition-all" type="submit">
+        <button
+          className="bg-blue-600 rounded-2xl text-white p-2 cursor-pointer hover:opacity-80 duration-200 transition-all"
+          type="submit"
+        >
           Register
         </button>
       </form>

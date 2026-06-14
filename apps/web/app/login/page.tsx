@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "../services/api";
+import Swal from "sweetalert2";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,10 +23,26 @@ export default function LoginPage() {
 
       localStorage.setItem("token", data.token);
 
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Login succesful",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       router.push("/dashboard");
     } catch (err) {
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Login failed, kindly try again!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       console.error("login error:", err);
-      alert("Login failed");
     }
   }
   return (
@@ -45,11 +62,18 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="bg-blue-600 text-white p-2 rounded-2xl cursor-pointer hover:opacity-80 duration-200 transition-all" type="submit">
+          <button
+            className="bg-blue-600 text-white p-2 rounded-2xl cursor-pointer hover:opacity-80 duration-200 transition-all"
+            type="submit"
+          >
             Login
           </button>
         </form>
-        <button onClick={() => router.push("/register")} className="bg-red-400 text-white p-2 rounded-2xl cursor-pointer hover:opacity-80 duration-200 transition-all" type="submit">
+        <button
+          onClick={() => router.push("/register")}
+          className="bg-red-400 text-white p-2 rounded-2xl cursor-pointer hover:opacity-80 duration-200 transition-all"
+          type="submit"
+        >
           Register
         </button>
       </div>
