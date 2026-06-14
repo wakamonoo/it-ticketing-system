@@ -7,6 +7,7 @@ import ticketRoutes from "./routes/ticket.routes";
 import userRoutes from "./routes/user.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import ticketTypeRoutes from "./routes/ticketType.routes"
+import departmentRoutes from "./routes/department.routes"
 
 import { authMiddleware } from "./middleware/auth.middleware";
 
@@ -30,6 +31,7 @@ app.use("/tickets", ticketRoutes);
 app.use("/users", userRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/ticketType", ticketTypeRoutes)
+app.use("/departments", departmentRoutes)
 
 const PORT = process.env.PORT || 5000;
 

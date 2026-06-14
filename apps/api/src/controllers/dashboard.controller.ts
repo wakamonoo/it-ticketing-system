@@ -14,6 +14,14 @@ export const getDashboardStats = async (req: any, res: any) => {
       where: { status: "OPEN" },
     });
 
+    const inProgressTickets = await prisma.ticket.count({
+      where: { status: "IN_PROGRESS" },
+    });
+
+    const escalatedTickets = await prisma.ticket.count({
+      where: { status: "ESCALATED" },
+    });
+
     const resolvedTickets = await prisma.ticket.count({
       where: { status: "RESOLVED" },
     });
@@ -25,6 +33,8 @@ export const getDashboardStats = async (req: any, res: any) => {
     res.json({
       myTickets,
       openTickets,
+      inProgressTickets,
+      escalatedTickets,
       resolvedTickets,
       closedTickets,
     });

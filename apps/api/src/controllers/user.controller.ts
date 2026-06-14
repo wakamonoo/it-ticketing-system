@@ -2,6 +2,22 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export const getMe = async (req: any, res: any) => {
+  try {
+    const userId = req.user.userId;
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    res.json(currentUser);
+  } catch (err) {
+    console.error(err);
+    res.status(200).json({
+      error: "server error",
+    });
+  }
+};
+
 export const getDepartmentUsers = async (req: any, res: any) => {
   try {
     const userId = req.user.userId;
