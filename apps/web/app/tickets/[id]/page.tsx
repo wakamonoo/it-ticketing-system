@@ -2,8 +2,9 @@
 
 import { apiFetch } from "@/app/services/api";
 import ProtectedRoute from "@/components/protectedRoute";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 type Ticket = {
   id: string;
@@ -37,6 +38,7 @@ export default function TicketDetailsPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [assignedToId, setAssignedToId] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     async function load() {
@@ -77,9 +79,26 @@ export default function TicketDetailsPage() {
         }),
       });
 
-      window.location.reload();
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Ticket assigned succefully",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      router.replace("/tickets/department");
     } catch (err) {
-      console.error("ASSIGN ERROR:", err);
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Kindly try again!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      console.error("CLOSE ERROR:", err);
+      router.replace("/tickets/department");
     }
   }
 
@@ -89,9 +108,26 @@ export default function TicketDetailsPage() {
         method: "PATCH",
       });
 
-      window.location.reload();
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Ticket escalated succefully",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      router.replace("/tickets/department");
     } catch (err) {
-      console.error("ESCALATE ERROR:", err);
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Kindly try again!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      console.error("CLOSE ERROR:", err);
+      router.replace("/tickets/department");
     }
   }
 
@@ -101,9 +137,26 @@ export default function TicketDetailsPage() {
         method: "PATCH",
       });
 
-      window.location.reload();
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Ticket resolved succefully",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      router.replace("/tickets/department");
     } catch (err) {
-      console.error("RESOLVE ERROR:", err);
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Kindly try again!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      console.error("CLOSE ERROR:", err);
+      router.replace("/tickets/department");
     }
   }
 
@@ -113,9 +166,26 @@ export default function TicketDetailsPage() {
         method: "PATCH",
       });
 
-      window.location.reload();
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Ticket closed succefully",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      router.replace("/tickets/department");
     } catch (err) {
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Kindly try again!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       console.error("CLOSE ERROR:", err);
+      router.replace("/tickets/department");
     }
   }
 
@@ -189,6 +259,11 @@ export default function TicketDetailsPage() {
                 <button
                   onClick={assignTicket}
                   disabled={cannotAssign}
+                  title={
+                    cannotAssign
+                      ? "This ticket is already marked as resolved or closed"
+                      : "Assign ticket"
+                  }
                   className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotAssign ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
                 >
                   Assign
@@ -197,6 +272,11 @@ export default function TicketDetailsPage() {
                 <button
                   onClick={escalateTicket}
                   disabled={cannotEscalate}
+                  title={
+                    cannotEscalate
+                      ? "This ticket is already marked as either resolved, closed or in the last pipeline"
+                      : "Escalate ticket"
+                  }
                   className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotEscalate ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
                 >
                   Escalate
@@ -205,6 +285,11 @@ export default function TicketDetailsPage() {
                 <button
                   onClick={resolveTicket}
                   disabled={cannotResolve}
+                  title={
+                    cannotResolve
+                      ? "This ticket is already marked as resolved or closed"
+                      : "Resolve ticket"
+                  }
                   className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotResolve ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
                 >
                   Resolve
@@ -213,6 +298,11 @@ export default function TicketDetailsPage() {
                 <button
                   onClick={closeTicket}
                   disabled={cannotClose}
+                  title={
+                    cannotClose
+                      ? "This ticket must be resolved first"
+                      : "Close ticket"
+                  }
                   className={`text-white px-3 py-1 rounded  duration-200 transition-all ${cannotClose ? "bg-gray-400 cursor-not-allowed" : " bg-blue-500 hover:opacity-80  cursor-pointer"}`}
                 >
                   Close

@@ -30,7 +30,7 @@ app.use("/auth", authRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/users", userRoutes);
 app.use("/dashboard", dashboardRoutes);
-app.use("/ticketType", ticketTypeRoutes)
+app.use("/ticketTypes", ticketTypeRoutes)
 app.use("/departments", departmentRoutes)
 
 const PORT = process.env.PORT || 5000;

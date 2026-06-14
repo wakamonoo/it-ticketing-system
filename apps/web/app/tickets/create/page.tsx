@@ -40,7 +40,7 @@ export default function CreateTicketPage() {
   useEffect(() => {
     async function loadTypes() {
       try {
-        const data = await apiFetch("/ticketType");
+        const data = await apiFetch("/ticketTypes");
         setTypes(data);
       } catch (err) {
         console.error("failed to load ticket types:", err);
