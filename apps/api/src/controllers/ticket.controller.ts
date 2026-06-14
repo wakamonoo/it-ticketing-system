@@ -8,6 +8,10 @@ export const createTicket = async (req: any, res: any) => {
 
     const userId = req.user.userId;
 
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
     const firstStep = await prisma.ticketPipeline.findFirst({
       where: {
         ticketTypeId,
@@ -38,7 +42,7 @@ export const createTicket = async (req: any, res: any) => {
         ticketId: ticket.id,
         userId,
         type: "CREATED",
-        message: "ticket created",
+        message: "Ticket created",
       },
     });
 
@@ -138,8 +142,6 @@ export const getTicketActivity = async (req: any, res: any) => {
   }
 };
 
-
-
 export const getTicketById = async (req: any, res: any) => {
   try {
     const ticketId = req.params.id;
@@ -174,9 +176,17 @@ export const assignTicket = async (req: any, res: any) => {
 
     const userId = req.user.userId;
 
+    const assignedTo = await prisma.user.findUnique({
+      where: { id: assignedToId },
+    });
+
     const ticket = await prisma.ticket.findUnique({
       where: { id: ticketId },
     });
+
+    if (!assignedTo) {
+      return res.status(400).json({ error: "user not found" });
+    }
 
     if (!ticket) {
       return res.status(400).json({ error: "ticket not found" });
@@ -187,6 +197,11 @@ export const assignTicket = async (req: any, res: any) => {
         error: "cannot assign completed tickets",
       });
     }
+
+    const previousAssignee = ticket.assignedToId;
+
+    const isReassigned =
+      previousAssignee !== null && previousAssignee !== assignedToId;
 
     const updatedTicket = await prisma.ticket.update({
       where: { id: ticketId },
@@ -200,8 +215,12 @@ export const assignTicket = async (req: any, res: any) => {
       data: {
         ticketId,
         userId,
-        type: "ASSIGNED",
-        message: `Assigned ticket to ${assignedToId}`,
+        type: isReassigned ? "REASSIGNED" : "ASSIGNED",
+        message: isReassigned
+          ? `Reassigned ticket to ${assignedTo?.name}`
+          : `Assigned ticket to ${assignedTo?.name}`,
+        assignedFromId: previousAssignee,
+        assignedToId,
       },
     });
 
@@ -215,6 +234,7 @@ export const assignTicket = async (req: any, res: any) => {
 export const escalateTicket = async (req: any, res: any) => {
   try {
     const ticketId = req.params.id;
+    const { userMessage } = req.body;
 
     const userId = req.user.userId;
 
@@ -266,7 +286,8 @@ export const escalateTicket = async (req: any, res: any) => {
         ticketId,
         userId,
         type: "ESCALATED",
-        message: `Escalated to pipeline step ${nextStep}`,
+        message: `Escalated to Pipeline Step ${nextStep}`,
+        userMessage,
       },
     });
 
@@ -280,6 +301,7 @@ export const escalateTicket = async (req: any, res: any) => {
 export const resolveTicket = async (req: any, res: any) => {
   try {
     const ticketId = req.params.id;
+    const { userMessage } = req.body;
 
     const userId = req.user.userId;
 
@@ -317,6 +339,7 @@ export const resolveTicket = async (req: any, res: any) => {
         userId,
         type: "STATUS_CHANGED",
         message: "Ticket resolved",
+        userMessage,
       },
     });
 
@@ -330,6 +353,7 @@ export const resolveTicket = async (req: any, res: any) => {
 export const closeTicket = async (req: any, res: any) => {
   try {
     const ticketId = req.params.id;
+    const { userMessage } = req.body;
 
     const userId = req.user.userId;
 
@@ -365,6 +389,7 @@ export const closeTicket = async (req: any, res: any) => {
         userId,
         type: "STATUS_CHANGED",
         message: "Ticket closed",
+        userMessage,
       },
     });
 

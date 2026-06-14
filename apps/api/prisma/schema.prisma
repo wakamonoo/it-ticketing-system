@@ -65,14 +65,17 @@ model Ticket {
 }
 
 model ActivityLog {
-  id        String       @id @default(cuid())
-  ticketId  String
-  userId    String
-  type      ActivityType
-  message   String?
-  createdAt DateTime     @default(now())
-  ticket    Ticket       @relation(fields: [ticketId], references: [id])
-  user      User         @relation(fields: [userId], references: [id])
+  id             String       @id @default(cuid())
+  ticketId       String
+  userId         String
+  type           ActivityType
+  message        String?
+  userMessage    String?
+  assignedFromId String?
+  assignedToId   String?
+  createdAt      DateTime     @default(now())
+  ticket         Ticket       @relation(fields: [ticketId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
 }
 
 model TicketPipeline {
